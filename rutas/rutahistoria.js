@@ -41,7 +41,7 @@ rutas.put('/editar/:id', async (req, res) => {
     }
 });
 //ENDPOINT 4. eliminar
-//ENDPOINT 4. eliminar
+
 rutas.delete('/eliminar/:id',async (req, res) => {
     try {
        
@@ -53,6 +53,18 @@ rutas.delete('/eliminar/:id',async (req, res) => {
        } 
     catch (error) {
         res.status(500).json({ mensaje :  error.message})
+    }
+});
+//ENDPOINT 5 filtrado por tipo
+
+rutas.get('/filtrotipo/:dato', async (req, res) => {
+    try  {
+        const tipobuscado= req.params.dato;
+        const historia = await HistoriaModel.find({ tipo:  tipobuscado}).exec();
+        
+        res.json(historia);
+    } catch (error){
+        res.status(500).json({mensaje: error.message});
     }
 });
 
