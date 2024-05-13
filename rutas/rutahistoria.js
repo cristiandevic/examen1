@@ -41,6 +41,7 @@ rutas.put('/editar/:id', async (req, res) => {
     }
 });
 //ENDPOINT 4. eliminar
+//ENDPOINT 4. eliminar
 rutas.delete('/eliminar/:id',async (req, res) => {
     try {
        
