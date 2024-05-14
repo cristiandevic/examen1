@@ -55,7 +55,7 @@ rutas.delete('/eliminar/:id',async (req, res) => {
         res.status(500).json({ mensaje :  error.message})
     }
 });
-//ENDPOINT 5 filtrado por tipo
+//ENDPOINT 5 filtrado por tipo de historia
 
 rutas.get('/filtrotipo/:dato', async (req, res) => {
     try  {
@@ -67,7 +67,80 @@ rutas.get('/filtrotipo/:dato', async (req, res) => {
         res.status(500).json({mensaje: error.message});
     }
 });
+//ENDPOINT 6 agregar puntuacion
+rutas.put('/agregarPuntuacion/:id', async (req, res) => {
+    try {   
 
+        const agregar=req.body;  
+        const historiaEditada = await HistoriaModel.findByIdAndUpdate(req.params.id, agregar, { new : true });
+        if (!historiaEditada)
+            return res.status(404).json({ mensaje : 'no se pudo modificar!!!'});
+        else
+            return res.json(historiaEditada);
+
+    } catch (error) {
+        res.status(400).json({ mensaje :  error.message})
+    }
+});
+//ENDPOINT 7 filtrado por puntuacion
+
+rutas.get('/filtroPuntuacion/:puntuacion', async (req, res) => {
+    try  {
+        
+        const historia = await HistoriaModel.find({ puntuacion :  req.params.puntuacion }).exec();
+        
+        
+        res.json(historia);
+    } catch (error){
+        res.status(500).json({mensaje: error.message});
+    }
+});
+//ENDPOINT 7 encontrar uno de acuerdo a la puntuacion enviada 
+rutas.get('/encontrarUno/:puntuacion', async (req, res) => {
+    try  {
+        
+        const historia = await HistoriaModel.findOne({ puntuacion :  req.params.puntuacion }).exec();
+        
+        res.json(historia);
+    } catch (error){
+        res.status(500).json({mensaje: error.message});
+    }
+});
+
+// Endpoint 8: seleccionar una historia aleatoria
+rutas.get('/historiaAleatoria', async (req, res) => {
+    try {
+      const count = await HistoriaModel.countDocuments();
+      const randomIndex = Math.floor(Math.random() * count);
+  
+      const historiaAleatoria = await HistoriaModel.findOne().skip(randomIndex).exec();
+  
+      if (!historiaAleatoria) {
+        return res.status(404).json({ mensaje: 'No se encontraron historias' });
+      }
+  
+      res.json(historiaAleatoria);
+    } catch (error) {
+      res.status(500).json({ mensaje: error.message });
+    }
+  });
+
+  // Endpoint 9: historias por autor
+rutas.get('/historiasAutor/:autor', async (req, res) => {
+    try {
+      const autor = req.params.autor;
+  
+      const historiasAutor = await HistoriaModel.find({ autor: autor }).exec();
+  
+      if (!historiasAutor || historiasAutor.length === 0) {
+        return res.status(404).json({ mensaje: `No se encontraron historias del autor ${autor}` });
+      }
+  
+      res.json(historiasAutor);
+    } catch (error) {
+        res.status(500).json({ mensaje: error.message });
+      }
+    });
 
 
 
