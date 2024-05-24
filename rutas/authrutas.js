@@ -36,7 +36,8 @@ rutas.post('/iniciarsesion', async (req, res) => {
     }
 });
 // Cerrar sesion
-const blacklist = [];
+
+const blacklist = require("../blacklist");
 
 async function addTokenToBlacklist(token) {
 

@@ -5,7 +5,7 @@ const UsuarioModel = require('../models/usuario');
 //endpoint traer todas las historia
 rutas.get('/traerhistoria', async (req, res) => {
     try  {
-        const historia = await  HistoriaModel.find();
+        const historia = await  HistoriaModel.find().populate('autor');
         res.json(historia);
     } catch (error){
         res.status(500).json({mensaje: error.message});
@@ -127,7 +127,7 @@ rutas.get('/historiaAleatoria', async (req, res) => {
     }
   });
 
-  // Endpoint 9: historias por autor
+  // reporte 1: historias por autor
 rutas.get('/historiasAutor/:autor', async (req, res) => {
     try {
       const autor = req.params.autor;
@@ -144,7 +144,7 @@ rutas.get('/historiasAutor/:autor', async (req, res) => {
       }
     });
 
-    //REPORTES 1
+    //REPORTES 2
 rutas.get('/historiaPorUsuario/:usuarioId', async (peticion, respuesta) =>{
     const {usuarioId} = peticion.params;
     //console.log(usuarioId);
@@ -152,8 +152,9 @@ rutas.get('/historiaPorUsuario/:usuarioId', async (peticion, respuesta) =>{
         const usuario = await UsuarioModel.findById(usuarioId);
         if (!usuario)
             return respuesta.status(404).json({mensaje: 'usuario no encontrado'});
-        const historias = await HistoriaModel.find({ usuario: usuarioId}).populate('usuario');
+        const historias = await HistoriaModel.find({ usuario: usuarioId}).populate('usuario').populate('autor');
         respuesta.json(historias);
+
 
     } catch(error){
         respuesta.status(500).json({ mensaje :  error.message})

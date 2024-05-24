@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 //definir el esquema
 const historiaSchema = new mongoose.Schema({
     // nombre: { type: String, require: true}
-    autor : String,
+    autor: { type: mongoose.Schema.Types.ObjectId, ref: 'Autor' },
     tipo : String,
     contenido : String,
     puntuacion : Number,

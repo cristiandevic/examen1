@@ -4,11 +4,13 @@ const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const authRutas = require('./rutas/authrutas');
 const Usuario = require('./models/usuario');
+const blacklist=require('./blacklist')
 
 require('dotenv').config();
 const app = express();
 // ruta
 const rutahistoria = require('./rutas/rutahistoria');
+const autorrutas = require('./rutas/autorrutas');
 
 // configuraciones de environment
 const PORT = process.env.PORT || 3000;
@@ -29,7 +31,11 @@ const autenticar = async (req, res, next)=>{
         const token = req.headers.authorization?.split(' ')[1];
         if (!token)
             res.status(401).json({mensaje: 'No existe el token de autenticacion'});
+        if (blacklist.includes(token)) {
+                return res.json({mensaje:"el token no es válido"});
+            }
         const decodificar = jwt.verify(token, 'clave_secreta');
+
         req.usuario = await  Usuario.findById(decodificar.usuarioId);
         next();
     }
@@ -38,8 +44,7 @@ const autenticar = async (req, res, next)=>{
     }
 };
 
-//utilizar las rutas de las historias
-//app.use('/historia', rutahistoria);
 
 app.use('/auth', authRutas);
+app.use('/autor', autenticar, autorrutas);
 app.use('/historia', autenticar, rutahistoria);
