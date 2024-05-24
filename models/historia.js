@@ -5,7 +5,8 @@ const historiaSchema = new mongoose.Schema({
     autor : String,
     tipo : String,
     contenido : String,
-    puntuacion : Number
+    puntuacion : Number,
+    usuario: { type: mongoose.Schema.Types.ObjectId, ref: 'Usuario' }
 });
 
 const HistoriaModel = mongoose.model('Historia',historiaSchema, 'historia');

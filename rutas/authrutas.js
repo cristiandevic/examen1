@@ -28,11 +28,44 @@ rutas.post('/iniciarsesion', async (req, res) => {
         if (!validarContrasena)
             return res.status(401).json({ error : 'Contrasenia invalido!!!!!'});
         //creacion de token 
-        const token = jwt.sign({ usuarioId: usuario._id },'clave_secreta', {expiresIn: '3h'});
+        const token = jwt.sign({ usuarioId: usuario._id },'clave_secreta', {expiresIn: '8h'});
         res.json( {token});
     }
     catch(error){
         res.status(500).json({mensaje: error.message});
     }
 });
+// Cerrar sesion
+const blacklist = [];
+
+async function addTokenToBlacklist(token) {
+
+  if (blacklist.includes(token)) {
+    return; 
+  }
+  blacklist.push(token);
+}
+rutas.post('/cerrarSesion', async (req, res) => {
+    try {
+  
+      const token = req.headers.authorization?.split(' ')[1];
+      if (!token) {
+        return res.status(401).json({ error: 'Token no proporcionado' });
+      }
+
+      const decodedToken = jwt.verify(token, 'clave_secreta');
+      if (!decodedToken) {
+        return res.status(401).json({ error: 'Token inválido' });
+      } 
+      
+      await addTokenToBlacklist(token);  
+      
+      res.json({ message: 'Sesión cerrada con éxito' });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Error al cerrar sesión' });
+    }
+  });
+
+
 module.exports = rutas;

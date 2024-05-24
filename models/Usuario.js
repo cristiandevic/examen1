@@ -36,5 +36,7 @@ usuarioSchema.methods.compararContrasenia = async function  ( contraseniaCompara
     return await bcrypt.compare(contraseniaComparar, this.contrasenia);
 };
 
-const UsuarioModel = mongoose.model('Usuario',usuarioSchema, 'usuario');
+
+
+const UsuarioModel =  mongoose.model('Usuario',usuarioSchema, 'usuario');
 module.exports = UsuarioModel;

@@ -1,6 +1,7 @@
 const express = require('express');
 const rutas = express.Router();
 const HistoriaModel = require('../models/historia');
+const UsuarioModel = require('../models/usuario');
 //endpoint traer todas las historia
 rutas.get('/traerhistoria', async (req, res) => {
     try  {
@@ -17,7 +18,8 @@ rutas.post('/crear', async (req, res) => {
         autor: req.body.autor,
         tipo: req.body.tipo,
         contenido: req.body.contenido,
-        puntuacion: req.body.puntuacion
+        puntuacion: req.body.puntuacion,
+        usuario: req.body.usuario // asignar el id del usuario
     })
     try {
         const nuevahistoria = await historia.save();
@@ -141,6 +143,23 @@ rutas.get('/historiasAutor/:autor', async (req, res) => {
         res.status(500).json({ mensaje: error.message });
       }
     });
+
+    //REPORTES 1
+rutas.get('/historiaPorUsuario/:usuarioId', async (peticion, respuesta) =>{
+    const {usuarioId} = peticion.params;
+    //console.log(usuarioId);
+    try{
+        const usuario = await UsuarioModel.findById(usuarioId);
+        if (!usuario)
+            return respuesta.status(404).json({mensaje: 'usuario no encontrado'});
+        const historias = await HistoriaModel.find({ usuario: usuarioId}).populate('usuario');
+        respuesta.json(historias);
+
+    } catch(error){
+        respuesta.status(500).json({ mensaje :  error.message})
+    }
+});
+
 
 
 
