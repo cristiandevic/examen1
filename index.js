@@ -1,5 +1,6 @@
 //importacion de libs
 const express = require('express');
+const cors = require('cors');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const authRutas = require('./rutas/authrutas');
@@ -17,7 +18,12 @@ const PORT = process.env.PORT || 3000;
 const MONGO_URI = process.env.MONGO_URI;
 //manejo de JSON
 app.use(express.json());
-
+//uso de cors
+const corsOptions = {
+    origin : ['http://localhost:4200','http://localhost:4200/'],
+    optionsSuccessStatus: 200
+};
+app.use(cors(corsOptions));
 //CONEXION CON MONGODB\
 mongoose.connect(MONGO_URI)
 .then(() => {
@@ -46,5 +52,7 @@ const autenticar = async (req, res, next)=>{
 
 
 app.use('/auth', authRutas);
-app.use('/autor', autenticar, autorrutas);
-app.use('/historia', autenticar, rutahistoria);
+//app.use('/autor', autenticar, autorrutas);
+//app.use('/historia', autenticar, rutahistoria);
+app.use('/autor', autorrutas);
+app.use('/historia', rutahistoria);
